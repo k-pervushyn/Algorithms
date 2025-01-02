@@ -3,4 +3,5 @@ project(algorithms C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(algorithms test/main.c)
+add_executable(algorithms test/main.c
+        src/list.c)

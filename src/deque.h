@@ -7,7 +7,9 @@
 
 #define M_DEBUG
 
+#ifdef M_DEBUG
 #include <assert.h>
+#endif
 #include <stdlib.h>
 
 typedef struct str_deque deque;

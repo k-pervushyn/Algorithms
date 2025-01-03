@@ -7,6 +7,9 @@
 #include "../src/list.h"
 #include "../src/vector.h"
 #include "../src/deque.h"
+#include "../src/forward_list.h"
+#include "../src/stack.h"
+#include "../src/queue.h"
 
 void test_create_destroy_list() {
     list *l = create_list();
@@ -383,6 +386,207 @@ void test_order_deque() {
     printf("test_order_deque passed.\n");
 }
 
+void test_create_destroy_forward_list() {
+    forward_list *list = create_forward_list();
+    assert(list != NULL);
+    assert(forward_list_empty(list));
+    assert(forward_list_size(list) == 0);
+    destroy_forward_list(list);
+    printf("test_create_destroy_forward_list passed.\n");
+}
+
+void test_push_pop_front_forward_list() {
+    forward_list *list = create_forward_list();
+    for (int i = 0; i < 10; i++) {
+        forward_list_push_front(list, i);
+        assert(forward_list_front(list) == i);
+        assert(forward_list_size(list) == (size_t)(i + 1));
+    }
+    for (int i = 9; i >= 0; i--) {
+        assert(forward_list_front(list) == i);
+        assert(forward_list_pop_front(list) == i);
+        assert(forward_list_size(list) == (size_t)i);
+    }
+    assert(forward_list_empty(list));
+    assert(forward_list_size(list) == 0);
+    destroy_forward_list(list);
+    printf("test_push_pop_front_forward_list passed.\n");
+}
+
+void test_reverse_forward_list() {
+    forward_list *list = create_forward_list();
+    for (int i = 0; i < 10; i++)
+        forward_list_push_front(list, i);
+    forward_list *reversed_list = forward_list_reverse(list);
+    for (int i = 0; i < 10; i++) {
+        assert(forward_list_front(reversed_list) == i);
+        assert(forward_list_pop_front(reversed_list) == i);
+    }
+    assert(forward_list_empty(reversed_list));
+    assert(forward_list_size(reversed_list) == 0);
+    destroy_forward_list(list);
+    destroy_forward_list(reversed_list);
+    printf("test_reverse_forward_list passed.\n");
+}
+
+void test_combined_operations_forward_list() {
+    forward_list *list = create_forward_list();
+    for (int i = 0; i < 100; i++) {
+        forward_list_push_front(list, i);
+        if (i % 2 == 0)
+            assert(forward_list_pop_front(list) == i);
+    }
+    int expected_value = 99;
+    while (!forward_list_empty(list)) {
+        assert(forward_list_front(list) == expected_value);
+        assert(forward_list_pop_front(list) == expected_value);
+        expected_value -= 2;
+    }
+    assert(forward_list_empty(list));
+    assert(forward_list_size(list) == 0);
+    destroy_forward_list(list);
+    printf("test_combined_operations_forward_list passed.\n");
+}
+
+void test_create_destroy_stack() {
+    stack *s = create_stack();
+    assert(s != NULL);
+    assert(stack_empty(s));
+    assert(stack_size(s) == 0);
+    destroy_stack(s);
+    printf("test_create_destroy_stack passed.\n");
+}
+
+void test_stack_push_pop() {
+    stack *s = create_stack();
+    for (int i = 1; i <= 10; i++) {
+        stack_push(s, i);
+        assert(stack_top(s) == i);
+        assert(stack_size(s) == (size_t)i);
+    }
+    for (int i = 10; i >= 1; i--) {
+        assert(stack_top(s) == i);
+        stack_pop(s);
+        assert(stack_size(s) == (size_t)(i - 1));
+    }
+    assert(stack_empty(s));
+    destroy_stack(s);
+    printf("test_stack_push_pop passed.\n");
+}
+
+void test_stack_swap() {
+    stack *s1 = create_stack();
+    stack *s2 = create_stack();
+    for (int i = 1; i <= 5; i++) stack_push(s1, i);
+    for (int i = 10; i >= 6; i--) stack_push(s2, i);
+    stack_swap(s1, s2);
+    assert(stack_size(s1) == 5);
+    assert(stack_size(s2) == 5);
+    for (int i = 6; i <= 10; i++) {
+        assert(stack_top(s1) == i);
+        stack_pop(s1);
+    }
+    for (int i = 5; i >= 1; i--) {
+        assert(stack_top(s2) == i);
+        stack_pop(s2);
+    }
+    assert(stack_empty(s1));
+    assert(stack_empty(s2));
+    destroy_stack(s1);
+    destroy_stack(s2);
+    printf("test_stack_swap passed.\n");
+}
+
+void test_stack_combined_operations() {
+    stack *s = create_stack();
+    for (int i = 1; i <= 20; i++) {
+        stack_push(s, i);
+        if (i % 2 == 0) {
+            assert(stack_top(s) == i);
+            stack_pop(s);
+        }
+    }
+    int expected_value = 19;
+    while (!stack_empty(s)) {
+        assert(stack_top(s) == expected_value);
+        stack_pop(s);
+        expected_value -= 2;
+    }
+    assert(stack_empty(s));
+    destroy_stack(s);
+    printf("test_stack_combined_operations passed.\n");
+}
+
+void test_create_destroy_queue() {
+    queue *q = create_queue();
+    assert(q != NULL);
+    assert(queue_empty(q));
+    assert(queue_size(q) == 0);
+    destroy_queue(q);
+    printf("test_create_destroy_queue passed.\n");
+}
+
+void test_queue_push_pop() {
+    queue *q = create_queue();
+    for (int i = 1; i <= 10; i++) {
+        queue_push(q, i);
+        assert(queue_front(q) == 1);
+        assert(queue_back(q) == i);
+        assert(queue_size(q) == (size_t)i);
+    }
+    for (int i = 1; i <= 10; i++) {
+        assert(queue_front(q) == i);
+        queue_pop(q);
+        assert(queue_size(q) == (size_t)(10 - i));
+    }
+    assert(queue_empty(q));
+    destroy_queue(q);
+    printf("test_queue_push_pop passed.\n");
+}
+
+void test_queue_swap() {
+    queue *q1 = create_queue();
+    queue *q2 = create_queue();
+    for (int i = 1; i <= 5; i++) queue_push(q1, i);
+    for (int i = 10; i >= 6; i--) queue_push(q2, i);
+    queue_swap(q1, q2);
+    assert(queue_size(q1) == 5);
+    assert(queue_size(q2) == 5);
+    for (int i = 10; i >= 6; i--) {
+        assert(queue_front(q1) == i);
+        queue_pop(q1);
+    }
+    for (int i = 1; i <= 5; i++) {
+        assert(queue_front(q2) == i);
+        queue_pop(q2);
+    }
+    assert(queue_empty(q1));
+    assert(queue_empty(q2));
+    destroy_queue(q1);
+    destroy_queue(q2);
+    printf("test_queue_swap passed.\n");
+}
+
+void test_queue_combined_operations() {
+    queue *q = create_queue();
+    for (int i = 1; i <= 20; i++) {
+        queue_push(q, i);
+        if (i % 3 == 0) {
+            assert(queue_back(q) == (i / 3) * 3);
+            queue_pop(q);
+        }
+    }
+    int expected_value = 7;
+    while (!queue_empty(q)) {
+        assert(queue_front(q) == expected_value);
+        queue_pop(q);
+        expected_value += 1;
+    }
+    assert(queue_empty(q));
+    destroy_queue(q);
+    printf("test_queue_combined_operations passed.\n");
+}
+
 void test_list()
 {
     test_create_destroy_list();
@@ -391,7 +595,7 @@ void test_list()
     test_reverse_list();
     test_combined_operations_list();
     test_large_data_list();
-    printf("List tests passed!\n");
+    printf("list tests passed!\n");
 }
 
 void test_vector()
@@ -404,7 +608,7 @@ void test_vector()
     test_combined_operations_vector();
     test_large_data_vector();
     test_size_capacity_vector();
-    printf("Vector tests passed!\n");
+    printf("vector tests passed!\n");
 }
 
 void test_deque()
@@ -414,7 +618,34 @@ void test_deque()
     test_size_capacity_deque();
     test_combined_operations_deque();
     test_order_deque();
-    printf("All deque tests passed!\n");
+    printf("deque tests passed!\n");
+}
+
+void test_forward_list()
+{
+    test_create_destroy_forward_list();
+    test_push_pop_front_forward_list();
+    test_reverse_forward_list();
+    test_combined_operations_forward_list();
+    printf("forward_list tests passed!\n");
+}
+
+void test_stack()
+{
+    test_create_destroy_stack();
+    test_stack_push_pop();
+    test_stack_swap();
+    test_stack_combined_operations();
+    printf("stack tests passed!\n");
+}
+
+void test_queue()
+{
+    test_create_destroy_queue();
+    test_queue_push_pop();
+    test_queue_swap();
+    test_queue_combined_operations();
+    printf("queue tests passed!\n");
 }
 
 int main() {
@@ -423,5 +654,11 @@ int main() {
     test_vector();
     putchar('\n');
     test_deque();
+    putchar('\n');
+    test_forward_list();
+    putchar('\n');
+    test_stack();
+    putchar('\n');
+    test_queue();
     return 0;
 }

@@ -4,7 +4,7 @@
 
 #include "avl.h"
 
-node *find(const int key_to_find, node *root)
+node *avl_find(const int key_to_find, node *root)
 {
 	node *res = NULL;
 	if (!root)
@@ -12,29 +12,29 @@ node *find(const int key_to_find, node *root)
 	if (root->key == key_to_find)
 		res = root;
 	else if (root->key > key_to_find)
-		res = find(key_to_find, root->left);
+		res = avl_find(key_to_find, root->left);
 	else if (root->key < key_to_find)
-		res = find(key_to_find, root->right);
+		res = avl_find(key_to_find, root->right);
 	if (res == NULL)
 		return root;
 	return res;
 }
 
-node *left_descendant(node *value)
+node *avl_left_descendant(node *value)
 {
 	while (value->left)
 		value = value->left;
 	return value;
 }
 
-node *right_descendant(node *value)
+node *avl_right_descendant(node *value)
 {
 	while (value->right)
 		value = value->right;
 	return value;
 }
 
-node *left_ancestor(const node *value)
+node *avl_left_ancestor(const node *value)
 {
 	const int key = value->key;
 	while (value->parent && value->parent->key > key)
@@ -44,7 +44,7 @@ node *left_ancestor(const node *value)
 	return NULL;
 }
 
-node *right_ancestor(const node *value)
+node *avl_right_ancestor(const node *value)
 {
 	const int key = value->key;
 	while (value->parent && value->parent->key < key)
@@ -54,21 +54,21 @@ node *right_ancestor(const node *value)
 	return NULL;
 }
 
-node *next(const node *value)
+node *avl_next(const node *value)
 {
 	if (value->right != NULL)
-		return left_descendant(value->right);
-	return right_ancestor(value);
+		return avl_left_descendant(value->right);
+	return avl_right_ancestor(value);
 }
 
-node *prev(const node *value)
+node *avl_prev(const node *value)
 {
 	if (value->left != NULL)
-		return right_descendant(value->left);
-	return left_ancestor(value);
+		return avl_right_descendant(value->left);
+	return avl_left_ancestor(value);
 }
 
-void insert(int new_key, node **root)
+void avl_insert(int new_key, node **root)
 {
 	node *new_node;
 	if (!*root) {
@@ -77,7 +77,7 @@ void insert(int new_key, node **root)
 		(*root)->key = new_key;
 		return;
 	}
-    node *parent = find(new_key, *root);
+    node *parent = avl_find(new_key, *root);
 	if (parent->key == new_key)
 		return;
 	if (parent->key < new_key) {
@@ -92,9 +92,9 @@ void insert(int new_key, node **root)
 	new_node->left = new_node->right = NULL;
 }
 
-void delete(int key, node **root)
+void avl_delete(int key, node **root)
 {
-	node *current = find(key, *root), *next_val;
+	node *current = avl_find(key, *root), *next_val;
 	if (current->key != key)
 		return;
 	if (current->right == NULL) {
@@ -113,7 +113,7 @@ void delete(int key, node **root)
 			current->parent->right = current->left;
 		free(current);
 	} else {
-		next_val = next(current);
+		next_val = avl_next(current);
 		current->key = next_val->key;
 		if (next_val->right != NULL) {
 			next_val->right->parent = next_val->parent;
@@ -131,7 +131,7 @@ void delete(int key, node **root)
 	}
 }
 
-void rotate_left(node *base, node **tree)
+void avl_rotate_left(node *base, node **tree)
 {
 	if (base->right == NULL)
 		return;
@@ -152,7 +152,7 @@ void rotate_left(node *base, node **tree)
 		base->right->left->parent = base;
 }
 
-void rotate_right(node *base, node **tree)
+void avl_rotate_right(node *base, node **tree)
 {
 	if (base->left == NULL)
 		return;
@@ -171,14 +171,4 @@ void rotate_right(node *base, node **tree)
 	base->left->right = base;
 	if (base->left->right != NULL)
 		base->left->right->parent = base;
-}
-
-void avl_insert(int key, node *root)
-{
-	
-}
-
-void avl_delete(int key, node *root)
-{
-
 }

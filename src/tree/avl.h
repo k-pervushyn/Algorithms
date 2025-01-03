@@ -15,20 +15,20 @@ typedef struct str_node {
 	struct str_node *right;
 } node;
 
-node *left_descendant(node *value);
-node *right_descendant(node *value);
-node *left_ancestor(const node *value);
-node *right_ancestor(const node *value);
+node *avl_left_descendant(node *value);
+node *avl_right_descendant(node *value);
+node *avl_left_ancestor(const node *value);
+node *avl_right_ancestor(const node *value);
 
-node *find(int key_to_find, node *root);
+node *avl_find(int key_to_find, node *root);
 
-node *next(const node *value);
-node *prev(const node *value);
+node *avl_next(const node *value);
+node *avl_prev(const node *value);
 
-void insert(int new_key, node **root);
-void delete(int key, node **root);
+void avl_insert(int new_key, node **root);
+void avl_delete(int key, node **root);
 
-void rotate_left(node *base, node **tree);
-void rotate_right(node *base, node **tree);
+void avl_rotate_left(node *base, node **tree);
+void avl_rotate_right(node *base, node **tree);
 
 #endif //AVL_H

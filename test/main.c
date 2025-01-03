@@ -6,6 +6,7 @@
 #include <assert.h>
 #include "../src/list.h"
 #include "../src/vector.h"
+#include "../src/deque.h"
 
 void test_create_destroy_list() {
     list *l = create_list();
@@ -133,7 +134,7 @@ void test_get_set_vector() {
         vector_push_back(v, i * 10);
     for (size_t i = 0; i < vector_size(v); i++) {
         assert(vector_get(v, i) == (int)(i * 10));
-        vector_set(v, i, i * 20);
+        vector_set(v, i, (int)i * 20);
         assert(vector_get(v, i) == (int)(i * 20));
     }
     destroy_vector(v);
@@ -243,15 +244,158 @@ void test_size_capacity_vector() {
     printf("test_size_capacity_vector passed.\n");
 }
 
-int main() {
+void test_create_destroy_deque() {
+    const size_t INITIAL_CAPACITY = 2;
+    deque *d = create_deque();
+    assert(d != NULL);
+    assert(deque_size(d) == 0);
+    assert(deque_capacity(d) >= INITIAL_CAPACITY);
+    assert(deque_empty(d));
+    destroy_deque(d);
+    printf("test_create_destroy_deque passed.\n");
+}
+
+void test_push_pop_front_back_deque() {
+    deque *d = create_deque();
+    deque_push_front(d, 10);
+    assert(deque_size(d) == 1);
+    assert(deque_front(d) == 10);
+    assert(deque_back(d) == 10);
+    deque_push_front(d, 20);
+    assert(deque_size(d) == 2);
+    assert(deque_front(d) == 20);
+    assert(deque_back(d) == 10);
+    deque_push_back(d, 30);
+    assert(deque_size(d) == 3);
+    assert(deque_front(d) == 20);
+    assert(deque_back(d) == 30);
+    deque_push_back(d, 40);
+    assert(deque_size(d) == 4);
+    assert(deque_front(d) == 20);
+    assert(deque_back(d) == 40);
+    assert(deque_pop_front(d) == 20);
+    assert(deque_size(d) == 3);
+    assert(deque_front(d) == 10);
+    assert(deque_pop_front(d) == 10);
+    assert(deque_size(d) == 2);
+    assert(deque_front(d) == 30);
+    assert(deque_pop_back(d) == 40);
+    assert(deque_size(d) == 1);
+    assert(deque_back(d) == 30);
+    assert(deque_pop_back(d) == 30);
+    assert(deque_size(d) == 0);
+    assert(deque_empty(d));
+    destroy_deque(d);
+    printf("test_push_pop_front_back_deque passed.\n");
+}
+
+void test_size_capacity_deque() {
+    deque *d = create_deque();
+    const size_t INITIAL_CAPACITY = 2;
+    const size_t NUM_OPERATIONS = 100000;
+    assert(deque_size(d) == 0);
+    assert(deque_capacity(d) >= INITIAL_CAPACITY);
+    for (size_t i = 0; i < NUM_OPERATIONS; i++) {
+        if (i % 2 == 0)
+            deque_push_front(d, (int)i);
+        else
+            deque_push_back(d, (int)i);
+        assert(deque_size(d) == i + 1);
+        assert(deque_capacity(d) >= deque_size(d));
+        if (deque_capacity(d) > INITIAL_CAPACITY)
+            assert((deque_capacity(d) & (deque_capacity(d) - 1)) == 0); // Power of 2 check
+    }
+    for (size_t i = NUM_OPERATIONS; i > 0; i--) {
+        if (i % 2 == 0)
+            deque_pop_front(d);
+        else
+            deque_pop_back(d);
+        assert(deque_capacity(d) >= deque_size(d));
+        if (deque_capacity(d) > INITIAL_CAPACITY) {
+            assert((deque_capacity(d) & (deque_capacity(d) - 1)) == 0); // Power of 2 check
+        }
+    }
+    assert(deque_size(d) == 0);
+    assert(deque_capacity(d) >= INITIAL_CAPACITY);
+    for (size_t i = 0; i < NUM_OPERATIONS; i++)
+        deque_push_back(d, (int)i);
+    deque_shrink_to_fit(d);
+    assert(deque_capacity(d) == deque_size(d));
+    for (size_t i = NUM_OPERATIONS; i > 0; i--) {
+        deque_pop_back(d);
+        if (deque_size(d) > 0) {
+            deque_shrink_to_fit(d);
+            if (deque_size(d) > INITIAL_CAPACITY)
+                assert(deque_capacity(d) == deque_size(d));
+        }
+    }
+    assert(deque_size(d) == 0);
+    assert(deque_capacity(d) >= INITIAL_CAPACITY);
+    destroy_deque(d);
+    printf("test_size_capacity_deque passed.\n");
+}
+
+void test_combined_operations_deque() {
+    const size_t INITIAL_CAPACITY = 2;
+    deque *d = create_deque();
+    const size_t NUM_OPERATIONS = 100000;
+    for (size_t i = 0; i < NUM_OPERATIONS; i++) {
+        if (i % 3 == 0)
+            deque_push_front(d, (int)i);
+        else if (i % 3 == 1)
+            deque_push_back(d, (int)i);
+        else if (!deque_empty(d))
+            deque_pop_front(d);
+    }
+    while (!deque_empty(d))
+        deque_pop_back(d);
+    assert(deque_size(d) == 0);
+    assert(deque_capacity(d) >= INITIAL_CAPACITY);
+    destroy_deque(d);
+    printf("test_combined_operations_deque passed.\n");
+}
+
+void test_order_deque() {
+    deque *d = create_deque();
+    const size_t NUM_SERIES = 100;
+
+    for (size_t series = 0; series < NUM_SERIES; series++) {
+        const size_t SERIES_LENGTH = 1000;
+        for (size_t i = 0; i < SERIES_LENGTH; i++) {
+            if (i % 2 == 0)
+                deque_push_front(d, (int)(i + series * SERIES_LENGTH));
+            else
+                deque_push_back(d, (int)(i + series * SERIES_LENGTH));
+            assert(deque_size(d) == i + 1);
+        }
+        for (size_t i = 1; i <= SERIES_LENGTH; i++) {
+            int expected_value;
+            if (i <= SERIES_LENGTH / 2)
+                expected_value = (int)((SERIES_LENGTH - i * 2) + series * SERIES_LENGTH);
+            else
+                expected_value = (int)(2 * (i - SERIES_LENGTH / 2) - 1 + series * SERIES_LENGTH);
+            assert(deque_pop_front(d) == expected_value);
+            assert(deque_size(d) == SERIES_LENGTH - i);
+        }
+        assert(deque_empty(d));
+    }
+    destroy_deque(d);
+    printf("test_order_deque passed.\n");
+}
+
+void test_list()
+{
     test_create_destroy_list();
     test_push_pop_front_list();
     test_push_pop_back_list();
     test_reverse_list();
     test_combined_operations_list();
     test_large_data_list();
-    printf("List tests passed!\n\n");
+    printf("List tests passed!\n");
+}
 
+void test_vector()
+{
     test_create_destroy_vector();
     test_push_pop_back_vector();
     test_get_set_vector();
@@ -260,27 +404,24 @@ int main() {
     test_combined_operations_vector();
     test_large_data_vector();
     test_size_capacity_vector();
-    printf("Vector tests passed!\n\n");
-    return 0;
+    printf("Vector tests passed!\n");
 }
 
-/*
-int main() {
-      list *my_list = create_list();
-      push_front(my_list, 10);
-      push_front(my_list, 20);
-      push_front(my_list, 30);
-      push_front(my_list, 40);
-      push_front(my_list, 50);
-      while (!empty(my_list)) {
-            printf("Size: %lu\n", size(my_list));
-            printf("Front element is: %d\n", front(my_list));
-            printf("Removed front: %d\n", pop_front(my_list));
-            printf("Size: %lu\n", size(my_list));
-            printf("Back element is: %d\n", back(my_list));
-            printf("Removed back: %d\n", pop_back(my_list));
-      }
-      destroy_list(my_list);
-      return 0;
+void test_deque()
+{
+    test_create_destroy_deque();
+    test_push_pop_front_back_deque();
+    test_size_capacity_deque();
+    test_combined_operations_deque();
+    test_order_deque();
+    printf("All deque tests passed!\n");
 }
-*/
+
+int main() {
+    test_list();
+    putchar('\n');
+    test_vector();
+    putchar('\n');
+    test_deque();
+    return 0;
+}

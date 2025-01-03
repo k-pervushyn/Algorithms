@@ -4,9 +4,9 @@
 
 #include "avl.h"
 
-node *find(int key_to_find, node *root)
+node *find(const int key_to_find, node *root)
 {
-	node *res;
+	node *res = NULL;
 	if (!root)
 		return NULL;
 	if (root->key == key_to_find)
@@ -34,9 +34,9 @@ node *right_descendant(node *value)
 	return value;
 }
 
-node *left_ancestor(node *value)
+node *left_ancestor(const node *value)
 {
-	int key = value->key;
+	const int key = value->key;
 	while (value->parent && value->parent->key > key)
 		value = value->parent;
 	if (value->parent)
@@ -44,9 +44,9 @@ node *left_ancestor(node *value)
 	return NULL;
 }
 
-node *right_ancestor(node *value)
+node *right_ancestor(const node *value)
 {
-	int key = value->key;
+	const int key = value->key;
 	while (value->parent && value->parent->key < key)
 		value = value->parent;
 	if (value->parent)
@@ -54,14 +54,14 @@ node *right_ancestor(node *value)
 	return NULL;
 }
 
-node *next(node *value)
+node *next(const node *value)
 {
 	if (value->right != NULL)
 		return left_descendant(value->right);
 	return right_ancestor(value);
 }
 
-node *prev(node *value)
+node *prev(const node *value)
 {
 	if (value->left != NULL)
 		return right_descendant(value->left);

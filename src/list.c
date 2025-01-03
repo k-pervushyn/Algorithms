@@ -4,13 +4,13 @@
 
 #include "list.h"
 
-typedef struct node {
+typedef struct str_node {
     int _data;
-    struct node *_next;
-    struct node *_prev;
+    struct str_node *_next;
+    struct str_node *_prev;
 } node;
 
-struct list {
+struct str_list {
     node *_head;
     node *_tail;
     size_t _size;
@@ -38,21 +38,21 @@ void destroy_list(list *_list)
     }
 }
 
-int front(const list *_list)
+int list_front(const list *_list)
 {
     if (_list->_head)
         return _list->_head->_data;
     return -1;
 }
 
-int back(const list *_list)
+int list_back(const list *_list)
 {
     if (_list->_tail)
         return _list->_tail->_data;
     return -1;
 }
 
-void push_front(list *_list, const int _data)
+void list_push_front(list *_list, const int _data)
 {
     if (!_list->_head) {
         _list->_head = malloc(sizeof(node));
@@ -70,7 +70,7 @@ void push_front(list *_list, const int _data)
     _list->_size++;
 }
 
-void push_back(list *_list, const int _data)
+void list_push_back(list *_list, const int _data)
 {
      if (!_list->_tail) {
         _list->_tail = malloc(sizeof(node));
@@ -88,7 +88,7 @@ void push_back(list *_list, const int _data)
     _list->_size++;
 }
 
-int pop_front(list *_list)
+int list_pop_front(list *_list)
 {
     if (!_list->_head)
         return -1;
@@ -104,7 +104,7 @@ int pop_front(list *_list)
     return value;
 }
 
-int pop_back(list *_list)
+int list_pop_back(list *_list)
 {
      if (!_list->_tail)
         return -1;
@@ -120,15 +120,15 @@ int pop_back(list *_list)
     return value;
 }
 
-int empty(const list *_list) { return _list->_head ? 0 : 1; }
-size_t size(const list *_list) { return _list->_size; }
+int list_empty(const list *_list) { return _list->_head ? 0 : 1; }
+size_t list_size(const list *_list) { return _list->_size; }
 
-list *reverse(const list *_list)
+list *list_reverse(const list *_list)
 {
     list *_reversed = create_list();
     const node *tmp = _list->_head;
     while (tmp) {
-        push_front(_reversed, tmp->_data);
+        list_push_front(_reversed, tmp->_data);
         tmp = tmp->_next;
     }
     return _reversed;

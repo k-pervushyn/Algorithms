@@ -6,5 +6,4 @@ set(CMAKE_C_STANDARD 99)
 add_executable(algorithms test/main.c
         src/list.c
         src/vector.c
-        src/tree/avl.c
-        src/tree/bst.c)
+        )

@@ -6,20 +6,11 @@
 
 #define INITIAL_CAPACITY 2
 
-struct vector {
+struct str_vector {
     int *_allocator;
     size_t _size;
     size_t _capacity;
 };
-
-vector *create_vector(const size_t capacity)
-{
-    vector *_vector = malloc(sizeof(vector));
-    _vector->_allocator = malloc(capacity * sizeof(int));
-    _vector->_capacity = capacity;
-    _vector->_size = 0;
-    return _vector;
-}
 
 vector *create_vector()
 {
@@ -36,38 +27,44 @@ void destroy_vector(vector *_vector)
     free(_vector);
 }
 
-int get(const vector *_vector, const size_t _position)
+int vector_get(const vector *_vector, const size_t _position)
 {
     if (_position < _vector->_size)
         return _vector->_allocator[_position];
     return -1;
 }
 
-void set(vector *_vector, const size_t _position, const int _value)
+void vector_set(vector *_vector, const size_t _position, const int _value)
 {
-    if (_position < _vector->_size)
-        _vector->_allocator[_position] = _value;
-    // error: no element on this position
+    if (_position >= _vector->_size)
+        return; // error: no element on this position
+    _vector->_allocator[_position] = _value;
 }
 
-int front(const vector *_vector)
+int vector_front(const vector *_vector)
 {
-    if (_vector->_size > 0)
-        return _vector->_allocator[0];
-    return -1; // error: empty list
+    if (_vector->_size == 0)
+        return -1; // error: empty list
+    return _vector->_allocator[0];
 }
 
-int back(const vector *_vector)
+int vector_back(const vector *_vector)
 {
-    if (_vector->_size > 0)
-        return _vector->_allocator[_vector->_size - 1];
-    return -1; // error: empty list
+    if (_vector->_size == 0)
+        return -1; // error: empty list
+    return _vector->_allocator[_vector->_size - 1];
+}
+
+int needs_grow(const vector *_vector) { return _vector->_size == _vector->_capacity; }
+int needs_shrink(const vector *_vector)
+{
+    return _vector->_size <= _vector->_capacity / 4 && _vector->_capacity / 4 >= INITIAL_CAPACITY;
 }
 
 void grow(vector *_vector)
 {
     int *_new_allocator = malloc(2 * _vector->_capacity * sizeof(int));
-    for (int i = 0; i < _vector->_size; i++)
+    for (size_t i = 0; i < _vector->_size; i++)
         _new_allocator[i] = _vector->_allocator[i];
     free(_vector->_allocator);
     _vector->_allocator = _new_allocator;
@@ -77,35 +74,60 @@ void grow(vector *_vector)
 void shrink(vector *_vector)
 {
     int *_new_allocator = malloc(_vector->_capacity * sizeof(int) / 2);
-    for (int i = 0; i < _vector->_capacity / 2; i++)
+    for (size_t i = 0; i < _vector->_capacity / 2; i++)
         _new_allocator[i] = _vector->_allocator[i];
     free(_vector->_allocator);
     _vector->_allocator = _new_allocator;
     _vector->_capacity = _vector->_capacity / 2;
 }
 
-void push_back(vector *_vector, const int _value)
+void vector_push_back(vector *_vector, const int _value)
 {
-    if (_vector->_size >= _vector->_capacity)
-        shrink(_vector);
+    if (needs_grow(_vector))
+        grow(_vector);
     _vector->_allocator[_vector->_size++] = _value;
 }
 
-int pop_back(vector *_vector)
+int vector_pop_back(vector *_vector)
 {
-
+    const int result = _vector->_allocator[--_vector->_size];
+    if (needs_shrink(_vector))
+        shrink(_vector);
+    return result;
 }
 
-size_t size(const vector *_vector) { return _vector->_size; }
-size_t capacity(const vector*);
+size_t vector_size(const vector *_vector) { return _vector->_size; }
+size_t vector_capacity(const vector *_vector) { return _vector->_capacity; }
 
-void insert(vector*, size_t, int);
-void erase(vector*, size_t);
-
-void shrink_to_fit(vector *_vector)
+void vector_insert(vector *_vector, const size_t position, const int value)
 {
-    int *_new_allocator = malloc(_vector->_size);
-    for (int i = 0; i < _vector->_size; i++)
+    if (position > _vector->_size)
+        return; // error: position out of range
+    if (needs_grow(_vector))
+        grow(_vector);
+    for (size_t i = _vector->_size; i > position; i--)
+        _vector->_allocator[i] = _vector->_allocator[i - 1];
+    _vector->_allocator[position] = value;
+    _vector->_size++;
+}
+
+void vector_erase(vector *_vector, const size_t position)
+{
+    if (position >= _vector->_size)
+        return; // error: position out of range
+    for (size_t i = position; i < _vector->_size - 1; i++)
+        _vector->_allocator[i] = _vector->_allocator[i + 1];
+    _vector->_size--;
+    if (needs_shrink(_vector))
+        shrink(_vector);
+}
+
+void vector_shrink_to_fit(vector *_vector)
+{
+    if (_vector->_size <= INITIAL_CAPACITY)
+        return;
+    int *_new_allocator = malloc(_vector->_size*sizeof(int));
+    for (size_t i = 0; i < _vector->_size; i++)
         _new_allocator[i] = _vector->_allocator[i];
     free(_vector->_allocator);
     _vector->_allocator = _new_allocator;

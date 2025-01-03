@@ -4,9 +4,9 @@
 
 #include "bst.h"
 
-node *find(int key_to_find, node *root)
+node *find(const int key_to_find, node *root)
 {
-	node *res;
+	node *res = NULL;
 	if (!root)
 		return NULL;
 	if (root->key == key_to_find)
@@ -34,9 +34,9 @@ node *right_descendant(node *value)
 	return value;
 }
 
-node *left_ancestor(node *value)
+node *left_ancestor(const node *value)
 {
-	int key = value->key;
+	const int key = value->key;
 	while (value->parent && value->parent->key > key)
 		value = value->parent;
 	if (value->parent)
@@ -44,9 +44,9 @@ node *left_ancestor(node *value)
 	return NULL;
 }
 
-node *right_ancestor(node *value)
+node *right_ancestor(const node *value)
 {
-	int key = value->key;
+	const int key = value->key;
 	while (value->parent && value->parent->key < key)
 		value = value->parent;
 	if (value->parent)
@@ -54,30 +54,30 @@ node *right_ancestor(node *value)
 	return NULL;
 }
 
-node *next(node *value)
+node *next(const node *value)
 {
 	if (value->right != NULL)
 		return left_descendant(value->right);
 	return right_ancestor(value);
 }
 
-node *prev(node *value)
+node *prev(const node *value)
 {
 	if (value->left != NULL)
 		return right_descendant(value->left);
 	return left_ancestor(value);
 }
 
-void insert(int new_key, node **root)
+void insert(const int new_key, node **root)
 {
-	node *parent, *new_node;
+	node *new_node;
 	if (!*root) {
 		*root = malloc(sizeof(node));
 		(*root)->parent = (*root)->left = (*root)->right = NULL;
 		(*root)->key = new_key;
 		return;
 	}
-    parent = find(new_key, *root);
+    node *parent = find(new_key, *root);
 	if (parent->key == new_key)
 		return;
 	if (parent->key < new_key) {
@@ -92,7 +92,7 @@ void insert(int new_key, node **root)
 	new_node->left = new_node->right = NULL;
 }
 
-void delete(int key, node **root)
+void delete(const int key, node **root)
 {
 	node *current = find(key, *root);
 	if (current->key != key)

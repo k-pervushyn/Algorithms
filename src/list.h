@@ -7,20 +7,20 @@
 
 #include <stdlib.h>
 
-typedef struct list list;
+typedef struct str_list list;
 
 list *create_list();
 void destroy_list(list*);
 
-int front(const list*);
-int back(const list*);
-void push_front(list*, const int);
-void push_back(list*, const int);
-int pop_front(list*);
-int pop_back(list*);
+int list_front(const list*);
+int list_back(const list*);
+void list_push_front(list*, const int);
+void list_push_back(list*, const int);
+int list_pop_front(list*);
+int list_pop_back(list*);
 
-int empty(const list*);
-size_t size(const list*);
-list *reverse(const list*);
+int list_empty(const list*);
+size_t list_size(const list*);
+list *list_reverse(const list*);
 
 #endif //LIST_H

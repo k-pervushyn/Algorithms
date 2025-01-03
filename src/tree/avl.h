@@ -17,13 +17,13 @@ typedef struct str_node {
 
 node *left_descendant(node *value);
 node *right_descendant(node *value);
-node *left_ancestor(node *value);
-node *right_ancestor(node *value);
+node *left_ancestor(const node *value);
+node *right_ancestor(const node *value);
 
 node *find(int key_to_find, node *root);
 
-node *next(node *value);
-node *prev(node *value);
+node *next(const node *value);
+node *prev(const node *value);
 
 void insert(int new_key, node **root);
 void delete(int key, node **root);

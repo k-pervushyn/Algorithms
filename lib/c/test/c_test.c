@@ -4,12 +4,12 @@
 
 #include <stdio.h>
 #include <assert.h>
-#include "../src/list.h"
-#include "../src/vector.h"
-#include "../src/deque.h"
-#include "../src/forward_list.h"
-#include "../src/stack.h"
-#include "../src/queue.h"
+#include "list.h"
+#include "vector.h"
+#include "deque.h"
+#include "forward_list.h"
+#include "stack.h"
+#include "queue.h"
 
 void test_create_destroy_list() {
     list *l = create_list();

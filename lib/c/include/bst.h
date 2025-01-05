@@ -27,4 +27,4 @@ node *prev(const node *value);
 void insert(int new_key, node **root);
 void delete(int key, node **root);
 
-#endif BST_H //BST_H
+#endif //BST_H

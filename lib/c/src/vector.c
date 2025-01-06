@@ -90,6 +90,8 @@ void vector_push_back(vector *_vector, const int _value)
 
 int vector_pop_back(vector *_vector)
 {
+    if (_vector->_size == 0)
+        return -1; // error: empty vector
     const int result = _vector->_allocator[--_vector->_size];
     if (vector_needs_shrink(_vector))
         vector_shrink(_vector);

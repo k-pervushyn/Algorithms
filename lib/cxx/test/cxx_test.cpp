@@ -8,6 +8,7 @@
 
 #include "Option.h"
 #include "List.h"
+#include "Vector.h"
 
 using std::string;
 
@@ -35,6 +36,7 @@ struct TestStruct {
     int id;
     std::string name;
 
+    TestStruct() : id(0) {}
     TestStruct(int i, const std::string &n) : id(i), name(n) {}
     bool operator==(const TestStruct &other) const {
         return id == other.id && name == other.name;
@@ -103,12 +105,77 @@ void test_list() {
     assert(reversed.front().get() == 3);
     assert(reversed.back().get() == 1);
 
-    printf("list<T> tests passed!\n");
+    printf("List<T> tests passed!\n");
+}
+
+void test_vector() {
+    // Test with int
+    Vector<int> intVector;
+    assert(intVector.size() == 0);
+    assert(intVector.capacity() >= 2);
+    intVector.push_back(10);
+    intVector.push_back(20);
+    assert(intVector.size() == 2);
+    assert(intVector[0] == 10);
+    assert(intVector[1] == 20);
+    intVector.push_back(30);  // Triggers growth
+    assert(intVector.capacity() >= 4);
+    assert(intVector[2] == 30);
+    intVector.pop_back();
+    assert(intVector.size() == 2);
+
+    // Test with std::string
+    Vector<std::string> stringVector;
+    stringVector.push_back("hello");
+    stringVector.push_back("world");
+    assert(stringVector.size() == 2);
+    assert(stringVector[0] == "hello");
+    assert(stringVector[1] == "world");
+    stringVector.insert(1, "there");
+    assert(stringVector[1] == "there");
+    assert(stringVector[2] == "world");
+    stringVector.erase(1);
+    assert(stringVector[1] == "world");
+
+    // Test with user-defined type
+    Vector<TestStruct> structVector;
+    structVector.push_back(TestStruct(1, "Alice"));
+    structVector.push_back(TestStruct(2, "Bob"));
+    assert(structVector.size() == 2);
+    assert(structVector[0] == TestStruct(1, "Alice"));
+    assert(structVector[1] == TestStruct(2, "Bob"));
+    structVector.clear();
+    assert(structVector.size() == 0);
+
+    // Test with pointers
+    Vector<int *> pointerVector;
+    int a = 100, b = 200, c = 300;
+    pointerVector.push_back(&a);
+    pointerVector.push_back(&b);
+    assert(pointerVector.size() == 2);
+    assert(pointerVector[0] == &a);
+    assert(pointerVector[1] == &b);
+    pointerVector.insert(1, &c);
+    assert(pointerVector[1] == &c);
+    pointerVector.erase(1);
+    assert(pointerVector[1] == &b);
+
+    // Test front() and back()
+    intVector.clear();
+    intVector.push_back(5);
+    intVector.push_back(10);
+    assert(intVector.front().get() == 5);
+    assert(intVector.back().get() == 10);
+    intVector.pop_back();
+    assert(intVector.back().get() == 5);
+
+    printf("Vector<T> tests passed!\n");
 }
 
 int main()
 {
     test_option();
     test_list();
+    test_vector();
     return 0;
 }

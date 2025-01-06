@@ -113,6 +113,68 @@ void test_list() {
     printf("List<T> tests passed!\n");
 }
 
+void test_list_copy_assignment() {
+    // Test copy constructor with int
+    List<int> originalIntList;
+    originalIntList.push_back(10);
+    originalIntList.push_back(20);
+    originalIntList.push_back(30);
+
+    List<int> copiedIntList = originalIntList; // Copy constructor
+    assert(copiedIntList.size() == originalIntList.size());
+    assert(copiedIntList.front().get() == originalIntList.front().get());
+
+    // Modify the original list and check that the copied list remains unchanged
+    originalIntList.push_back(40);
+    assert(originalIntList.size() != copiedIntList.size());
+    assert(copiedIntList.size() == 3);
+    assert(copiedIntList.back().get() == 30);
+
+    // Test assignment operator with std::string
+    List<std::string> originalStringList;
+    originalStringList.push_back("Alpha");
+    originalStringList.push_back("Beta");
+
+    List<std::string> assignedStringList;
+    assignedStringList = originalStringList; // Assignment operator
+    assert(assignedStringList.size() == originalStringList.size());
+    assert(assignedStringList.front().get() == originalStringList.front().get());
+
+    // Modify the original list and check that the assigned list remains unchanged
+    originalStringList.push_back("Gamma");
+    assert(originalStringList.size() != assignedStringList.size());
+    assert(assignedStringList.size() == 2);
+    assert(assignedStringList.back().get() == "Beta");
+
+    // Test copy constructor with user-defined types
+    List<TestStruct> originalStructList;
+    originalStructList.push_back(TestStruct(1, "Alice"));
+    originalStructList.push_back(TestStruct(2, "Bob"));
+
+    List<TestStruct> copiedStructList = originalStructList; // Copy constructor
+    assert(copiedStructList.size() == originalStructList.size());
+    assert(copiedStructList.front().get() == originalStructList.front().get());
+
+    // Test assignment operator with pointers
+    int a = 100, b = 200, c = 300;
+    List<int *> originalPointerList;
+    originalPointerList.push_back(&a);
+    originalPointerList.push_back(&b);
+
+    List<int *> assignedPointerList;
+    assignedPointerList = originalPointerList; // Assignment operator
+    assert(assignedPointerList.size() == originalPointerList.size());
+    assert(assignedPointerList.front().get() == originalPointerList.front().get());
+
+    // Modify the original list and check that the assigned list remains unchanged
+    originalPointerList.push_back(&c);
+    assert(originalPointerList.size() != assignedPointerList.size());
+    assert(assignedPointerList.size() == 2);
+    assert(*assignedPointerList.back().get() == b);
+
+    printf("List<T> copy/assignment tests passed!\n");
+}
+
 void test_vector() {
     // Test with int
     Vector<int> intVector;
@@ -177,7 +239,7 @@ void test_vector() {
     printf("Vector<T> tests passed!\n");
 }
 
-void test_vector_copy_and_assignment() {
+void test_vector_copy_assignment() {
     // Test copy constructor with int
     Vector<int> originalIntVector;
     originalIntVector.push_back(10);
@@ -309,7 +371,7 @@ void test_deque() {
     printf("Deque<T> tests passed!\n");
 }
 
-void test_deque_copy_and_assignment() {
+void test_deque_copy_assignment() {
     // Test copy constructor with int
     Deque<int> originalIntDeque;
     originalIntDeque.push_back(1);
@@ -372,13 +434,123 @@ void test_deque_copy_and_assignment() {
     printf("Deque<T> copy/assignment tests passed!\n");
 }
 
+void test_forward_list() {
+    // Test basic functionality with int
+    ForwardList<int> intList;
+    assert(intList.empty());
+    assert(intList.size() == 0);
+
+    intList.push_front(10);
+    intList.push_front(20);
+    intList.push_front(30);
+    assert(!intList.empty());
+    assert(intList.size() == 3);
+    assert(intList.front().get() == 30);
+
+    assert(intList.pop_front().get() == 30);
+    assert(intList.size() == 2);
+    assert(intList.front().get() == 20);
+
+    intList.clear();
+    assert(intList.empty());
+    assert(intList.size() == 0);
+
+    // Test with std::string
+    ForwardList<std::string> stringList;
+    stringList.push_front("Alice");
+    stringList.push_front("Bob");
+    assert(stringList.size() == 2);
+    assert(stringList.front().get() == "Bob");
+
+    assert(stringList.pop_front().get() == "Bob");
+    assert(stringList.front().get() == "Alice");
+    assert(stringList.size() == 1);
+
+    // Test with pointers
+    int a = 100, b = 200;
+    ForwardList<int *> pointerList;
+    pointerList.push_front(&a);
+    pointerList.push_front(&b);
+
+    assert(pointerList.size() == 2);
+    assert(*pointerList.front().get() == b);
+
+    assert(pointerList.pop_front().get() == &b);
+    assert(*pointerList.front().get() == a);
+    assert(pointerList.size() == 1);
+
+    printf("ForwardList<T> tests passed!\n");
+}
+
+void test_forward_list_copy_assignment() {
+    // Test copy constructor with int
+    ForwardList<int> originalIntList;
+    originalIntList.push_front(10);
+    originalIntList.push_front(20);
+    originalIntList.push_front(30);
+
+    ForwardList<int> copiedIntList = originalIntList; // Copy constructor
+    assert(copiedIntList.size() == originalIntList.size());
+    assert(copiedIntList.front().get() == originalIntList.front().get());
+
+    // Modify original and check that copied list is unchanged
+    originalIntList.push_front(40);
+    assert(originalIntList.size() != copiedIntList.size());
+    assert(copiedIntList.size() == 3);
+
+    // Test assignment operator with std::string
+    ForwardList<std::string> originalStringList;
+    originalStringList.push_front("Alpha");
+    originalStringList.push_front("Beta");
+
+    ForwardList<std::string> assignedStringList;
+    assignedStringList = originalStringList; // Assignment operator
+    assert(assignedStringList.size() == originalStringList.size());
+    assert(assignedStringList.front().get() == originalStringList.front().get());
+
+    // Modify original and check that assigned list is unchanged
+    originalStringList.push_front("Gamma");
+    assert(originalStringList.size() != assignedStringList.size());
+    assert(assignedStringList.size() == 2);
+
+    // Test copy constructor with user-defined types
+    ForwardList<TestStruct> originalStructList;
+    originalStructList.push_front(TestStruct(1, "Alice"));
+    originalStructList.push_front(TestStruct(2, "Bob"));
+
+    ForwardList<TestStruct> copiedStructList = originalStructList; // Copy constructor
+    assert(copiedStructList.size() == originalStructList.size());
+    assert(copiedStructList.front().get() == originalStructList.front().get());
+
+    // Test assignment operator with pointers
+    int a = 100, b = 200, c = 300;
+    ForwardList<int *> originalPointerList;
+    originalPointerList.push_front(&a);
+    originalPointerList.push_front(&b);
+
+    ForwardList<int *> assignedPointerList;
+    assignedPointerList = originalPointerList; // Assignment operator
+    assert(assignedPointerList.size() == originalPointerList.size());
+    assert(assignedPointerList.front().get() == originalPointerList.front().get());
+
+    // Modify original and check that assigned list is unchanged
+    originalPointerList.push_front(&c);
+    assert(originalPointerList.size() != assignedPointerList.size());
+    assert(assignedPointerList.size() == 2);
+
+    printf("ForwardList<T> copy/assignment tests passed!\n");
+}
+
 int main()
 {
     test_option();
     test_list();
+    test_list_copy_assignment();
     test_vector();
-    test_vector_copy_and_assignment();
+    test_vector_copy_assignment();
     test_deque();
-    test_deque_copy_and_assignment();
+    test_deque_copy_assignment();
+    test_forward_list();
+    test_forward_list_copy_assignment();
     return 0;
 }

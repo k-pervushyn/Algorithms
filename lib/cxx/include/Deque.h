@@ -5,6 +5,8 @@
 #ifndef DEQUE_H
 #define DEQUE_H
 
+#include "Option.h"
+
 template <typename T>
 class Deque {
     static constexpr size_t INIT_CAPACITY = 2;
@@ -65,7 +67,7 @@ Deque<T>::Deque(const Deque<T> &that) : _allocator(nullptr), _size(that._size),
     }
 }
 
-template<typename T>
+template <typename T>
 Deque<T> &Deque<T>::operator=(const Deque<T> &that)
 {
     if (this == &that)
@@ -100,30 +102,30 @@ Option<T> Deque<T>::back() const
     return Some(_allocator[_last]);
 }
 
-template<typename T>
+template <typename T>
 size_t Deque<T>::next_index(size_t index) const
 {
     index = index % _capacity;
     return index == _capacity - 1 ? 0 : index + 1;
 }
 
-template<typename T>
+template <typename T>
 size_t Deque<T>::prev_index(size_t index) const
 {
     index = index % _capacity;
     return index == 0 ? _capacity - 1 : index - 1;
 }
 
-template<typename T>
+template <typename T>
 bool Deque<T>::needs_grow() const { return _size == _capacity; }
 
-template<typename T>
+template <typename T>
 bool Deque<T>::needs_shrink() const
 {
     return _size <= _capacity / SHRINK_NEED_FRACTION && _capacity / SHRINK_NEED_FRACTION >= INIT_CAPACITY;
 }
 
-template<typename T>
+template <typename T>
 void Deque<T>::grow()
 {
     T *new_allocator = new T[_capacity * GROW_MULTIPLIER];
@@ -139,7 +141,7 @@ void Deque<T>::grow()
     _capacity *= GROW_MULTIPLIER;
 }
 
-template<typename T>
+template <typename T>
 void Deque<T>::shrink()
 {
     T *new_allocator = new T[_capacity / SHRINK_FRACTION];
@@ -155,7 +157,7 @@ void Deque<T>::shrink()
     _capacity /= SHRINK_FRACTION;
 }
 
-template<typename T>
+template <typename T>
 void Deque<T>::push_front(const T &value)
 {
     if (needs_grow())
@@ -166,7 +168,7 @@ void Deque<T>::push_front(const T &value)
     _size++;
 }
 
-template<typename T>
+template <typename T>
 void Deque<T>::push_back(const T &value)
 {
     if (needs_grow())
@@ -177,7 +179,7 @@ void Deque<T>::push_back(const T &value)
     _size++;
 }
 
-template<typename T>
+template <typename T>
 Option<T> Deque<T>::pop_front()
 {
     if (empty())
@@ -192,7 +194,7 @@ Option<T> Deque<T>::pop_front()
     return result;
 }
 
-template<typename T>
+template <typename T>
 Option<T> Deque<T>::pop_back()
 {
     if (empty())

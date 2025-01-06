@@ -43,10 +43,10 @@ public:
     List<T> reverse() const;
 };
 
-template<typename T>
+template <typename T>
 List<T>::List() : _head(nullptr), _tail(nullptr), _size(0) { }
 
-template<typename T>
+template <typename T>
 List<T>::List(const List<T> &other) : _head(nullptr), _tail(nullptr), _size(0)
 {
     const node *current = other._head;
@@ -56,7 +56,7 @@ List<T>::List(const List<T> &other) : _head(nullptr), _tail(nullptr), _size(0)
     }
 }
 
-template<typename T>
+template <typename T>
 List<T> &List<T>::operator=(const List<T> &other)
 {
     if (this == &other)
@@ -70,13 +70,13 @@ List<T> &List<T>::operator=(const List<T> &other)
     return *this;
 }
 
-template<typename T>
+template <typename T>
 List<T>::~List()
 {
     clear();
 }
 
-template<typename T>
+template <typename T>
 void List<T>::clear()
 {
     while (_head) {
@@ -88,7 +88,7 @@ void List<T>::clear()
     _tail = nullptr;
 }
 
-template<typename T>
+template <typename T>
 Option<T> List<T>::front() const
 {
     if (empty())
@@ -96,7 +96,7 @@ Option<T> List<T>::front() const
     return Some(_head->_data);
 }
 
-template<typename T>
+template <typename T>
 Option<T> List<T>::back() const
 {
     if (empty())
@@ -104,7 +104,7 @@ Option<T> List<T>::back() const
     return Some(_tail->_data);
 }
 
-template<typename T>
+template <typename T>
 void List<T>::push_front(const T &value)
 {
     if (!_head) {
@@ -119,7 +119,7 @@ void List<T>::push_front(const T &value)
     _size++;
 }
 
-template<typename T>
+template <typename T>
 void List<T>::push_back(const T &value)
 {
     if (!_tail) {
@@ -134,7 +134,7 @@ void List<T>::push_back(const T &value)
     _size++;
 }
 
-template<typename T>
+template <typename T>
 Option<T> List<T>::pop_front()
 {
     if (!_head)
@@ -151,7 +151,7 @@ Option<T> List<T>::pop_front()
     return result;
 }
 
-template<typename T>
+template <typename T>
 Option<T> List<T>::pop_back()
 {
     if (!_tail)
@@ -168,7 +168,7 @@ Option<T> List<T>::pop_back()
     return result;
 }
 
-template<typename T>
+template <typename T>
 List<T> List<T>::reverse() const
 {
     List<T> result;

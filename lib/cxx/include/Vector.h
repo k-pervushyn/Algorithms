@@ -5,6 +5,8 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include "Option.h"
+
 template <typename T>
 class Vector {
     static constexpr size_t INIT_CAPACITY = 2;
@@ -52,7 +54,7 @@ public:
     void erase(const size_t);
 };
 
-template<typename T>
+template <typename T>
 Vector<T>::Vector(const Vector<T> &that) : _allocator(nullptr), _size(that._size), _capacity(that._capacity)
 {
     _allocator = new T[_capacity];
@@ -60,7 +62,7 @@ Vector<T>::Vector(const Vector<T> &that) : _allocator(nullptr), _size(that._size
         _allocator[i] = that._allocator[i];
 }
 
-template<typename T>
+template <typename T>
 Vector<T> &Vector<T>::operator=(const Vector<T> &that)
 {
     if (this == &that)
@@ -74,7 +76,7 @@ Vector<T> &Vector<T>::operator=(const Vector<T> &that)
     return *this;
 }
 
-template<typename T>
+template <typename T>
 void Vector<T>::clear()
 {
     delete[] _allocator;
@@ -83,7 +85,7 @@ void Vector<T>::clear()
     _allocator = new T[_capacity];
 }
 
-template<typename T>
+template <typename T>
 Option<T> Vector<T>::front() const
 {
     if (_size == 0)
@@ -91,7 +93,7 @@ Option<T> Vector<T>::front() const
     return Some(_allocator[0]);
 }
 
-template<typename T>
+template <typename T>
 Option<T> Vector<T>::back() const
 {
     if (_size == 0)
@@ -99,16 +101,16 @@ Option<T> Vector<T>::back() const
     return Some(_allocator[_size - 1]);
 }
 
-template<typename T>
+template <typename T>
 bool Vector<T>::needs_grow() const { return _size == _capacity; }
 
-template<typename T>
+template <typename T>
 bool Vector<T>::needs_shrink() const
 {
     return _size <= _capacity / SHRINK_NEED_FRACTION && _capacity / SHRINK_NEED_FRACTION >= INIT_CAPACITY;
 }
 
-template<typename T>
+template <typename T>
 void Vector<T>::grow()
 {
     T *new_allocator = new T[_capacity * GROW_MULTIPLIER];
@@ -119,7 +121,7 @@ void Vector<T>::grow()
     _capacity *= GROW_MULTIPLIER;
 }
 
-template<typename T>
+template <typename T>
 void Vector<T>::shrink()
 {
     T *new_allocator = new T[_capacity / SHRINK_FRACTION];
@@ -130,7 +132,7 @@ void Vector<T>::shrink()
     _capacity /= SHRINK_FRACTION;
 }
 
-template<typename T>
+template <typename T>
 void Vector<T>::push_back(const T &value)
 {
     if (needs_grow())
@@ -138,7 +140,7 @@ void Vector<T>::push_back(const T &value)
     _allocator[_size++] = value;
 }
 
-template<typename T>
+template <typename T>
 Option<T> Vector<T>::pop_back()
 {
     if (_size == 0)
@@ -149,7 +151,7 @@ Option<T> Vector<T>::pop_back()
     return result;
 }
 
-template<typename T>
+template <typename T>
 void Vector<T>::insert(const size_t position, const T &value)
 {
     if (position > _size)
@@ -162,7 +164,7 @@ void Vector<T>::insert(const size_t position, const T &value)
     _size++;
 }
 
-template<typename T>
+template <typename T>
 void Vector<T>::erase(const size_t position)
 {
     if (position >= _size)

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.29)
 project(cxx_algorithms CXX)
 
-set(CMAKE_CXX_STANDARD 98)
+set(CMAKE_CXX_STANDARD 11)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 

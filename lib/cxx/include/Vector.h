@@ -10,7 +10,7 @@ class Vector {
     static constexpr size_t INIT_CAPACITY = 2;
     static constexpr size_t GROW_MULTIPLIER = 2;
     static constexpr size_t SHRINK_FRACTION = 2;
-    static constexpr size_t SHRINK_NEED_FRACTION = 2;
+    static constexpr size_t SHRINK_NEED_FRACTION = 4;
 
     T *_allocator;
     size_t _size;
@@ -36,6 +36,7 @@ public:
 private:
     bool needs_grow() const;
     bool needs_shrink() const;
+
     void grow();
     void shrink();
 

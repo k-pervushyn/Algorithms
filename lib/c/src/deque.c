@@ -88,7 +88,7 @@ void deque_grow(deque *_deque)
     }
     free(_deque->_allocator);
     _deque->_first = 0;
-    _deque->_last = _deque->_size - 1;
+    _deque->_last = _deque->_size > 0 ? _deque->_size - 1 : 0;
     _deque->_allocator = _new_allocator;
     _deque->_capacity = 2 * _deque->_capacity;
 }
@@ -103,7 +103,7 @@ void deque_shrink(deque *_deque)
     }
     free(_deque->_allocator);
     _deque->_first = 0;
-    _deque->_last = _deque->_size - 1;
+    _deque->_last = _deque->_size > 0 ? _deque->_size - 1 : 0;
     _deque->_allocator = _new_allocator;
     _deque->_capacity = _deque->_capacity / 2;
 }
@@ -132,15 +132,13 @@ int deque_pop_front(deque *_deque)
 {
     if (deque_empty(_deque))
         return -1; // error: empty deque
-    if (deque_needs_shrink(_deque))
-        deque_shrink(_deque);
     const int result = _deque->_allocator[_deque->_first];
     _deque->_first = deque_next_index(_deque, _deque->_first);
     _deque->_size--;
-    if (_deque->_size == 0) {
-        _deque->_first = 0;
-        _deque->_last = 0;
-    }
+    if (_deque->_size == 0)
+        _deque->_first = _deque->_last = 0;
+    if (deque_needs_shrink(_deque))
+        deque_shrink(_deque);
     return result;
 }
 
@@ -148,15 +146,13 @@ int deque_pop_back(deque *_deque)
 {
     if (deque_empty(_deque))
         return -1; // error: empty deque
-    if (deque_needs_shrink(_deque))
-        deque_shrink(_deque);
     const int result = _deque->_allocator[_deque->_last];
     _deque->_last = deque_prev_index(_deque, _deque->_last);
     _deque->_size--;
-    if (_deque->_size == 0) {
-        _deque->_first = 0;
-        _deque->_last = 0;
-    }
+    if (_deque->_size == 0)
+        _deque->_first = _deque->_last = 0;
+    if (deque_needs_shrink(_deque))
+        deque_shrink(_deque);
     return result;
 }
 
